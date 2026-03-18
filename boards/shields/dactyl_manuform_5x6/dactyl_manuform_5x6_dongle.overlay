@@ -1,38 +1,15 @@
+/*
+ * Copyright (c) 2020 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
 #include <dt-bindings/zmk/matrix_transform.h>
 
 / {
     chosen {
         zmk,kscan = &mock_kscan;
-        zmk,physical-layout = &physical_layout0;
+        zmk,matrix-transform = &default_transform;
         zephyr,display = &oled;
-    };
-    
-    i2c0: &i2c0 {
-        compatible = "nordic,nrf-twim";
-        status = "okay";
-        sda-pin = <6>;  // P0.06 (по умолчанию для nice!nano)
-        scl-pin = <8>;  // P0.08 (по умолчанию для nice!nano)
-
-        oled: ssd1306@3c {
-            compatible = "solomon,ssd1306fb";
-            reg = <0x3c>;
-            width = <128>;
-            height = <64>;
-            segment-offset = <0>;
-            page-offset = <0>;
-            display-offset = <0>;
-            multiplex-ratio = <31>;
-            segment-remap;
-            com-invdir;
-            prechargep = <0x22>;
-        };
-    };
-
-    mock_kscan: mock_kscan_0 {
-        compatible = "zmk,kscan-mock";
-        columns = <0>;
-        rows = <0>;
-        events = <0>;
     };
 
     default_transform: keymap_transform_0 {
@@ -51,9 +28,32 @@
         >;
     };
 
-    physical_layout0: physical_layout_0 {
-        compatible = "zmk,physical-layout";
-        display-name = "Default Layout";
-        transform = <&default_transform>;
+    mock_kscan: kscan_0 {
+        compatible = "zmk,kscan-mock";
+        columns = <0>;
+        rows = <0>;
+        events = <0>;
+    };
+};
+
+&i2c0 {
+    status = "okay";
+    sda-pin = <6>;   /* P0.06 - твой SDA */
+    scl-pin = <8>;   /* P0.08 - твой SCL */
+    clock-frequency = <I2C_BITRATE_FAST>;
+
+    oled: sh1106@3c {
+        compatible = "sinowealth,sh1106";
+        reg = <0x3c>;
+        width = <129>;
+        height = <64>;
+        segment-offset = <1>;
+        page-offset = <0>;
+        display-offset = <0>;
+        multiplex-ratio = <63>;
+        segment-remap;
+        com-invdir;
+        inversion-on;
+        prechargep = <0x22>;
     };
 };
