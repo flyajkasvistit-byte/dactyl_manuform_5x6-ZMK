@@ -5,6 +5,16 @@
  */
 #include <dt-bindings/zmk/matrix_transform.h>
 
+&pinctrl {
+    i2c0_default: i2c0_default {
+        group1 {
+            psels = <NRF_PSEL(TWIM_SDA, 0, 6)>,
+                    <NRF_PSEL(TWIM_SCL, 0, 8)>;
+            bias-pull-up;
+        };
+    };
+};
+
 / {
     chosen {
         zmk,kscan = &mock_kscan;
@@ -38,10 +48,11 @@
 
 &i2c0 {
     status = "okay";
-    sda-pin = <6>;   /* P0.06 - твой SDA */
-    scl-pin = <8>;   /* P0.08 - твой SCL */
     clock-frequency = <I2C_BITRATE_FAST>;
 
+    pinctrl-0 = <&i2c0_default>;
+    pinctrl-names = "default";
+    
     oled: sh1106@3c {
         compatible = "sinowealth,sh1106";
         reg = <0x3c>;
