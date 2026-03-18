@@ -3,3 +3,44 @@
  *
  * SPDX-License-Identifier: MIT
  */
+
+/ {
+    chosen {
+        zmk,kscan = &mock_kscan;
+        zmk,physical-layout = &physical_layout0;
+        zephyr,display = &oled;
+    };
+    
+    physical_layout0: physical_layout_0 {
+        compatible = "zmk,physical-layout";
+        display-name = "Dongle Layout";
+    };
+
+    mock_kscan: mock_kscan_0 {
+        compatible = "zmk,kscan-mock";
+    };
+};
+
+&i2c0 {
+    compatible = "nordic,nrf-twim";
+    status = "okay";
+    clock-frequency = <I2C_BITRATE_FAST>;
+    
+    /* ВНИМАНИЕ: Укажи свои пины! */
+    sda-pin = <6>;  /* P0.06 - сюда припаян SDA */
+    scl-pin = <7>;  /* P0.07 - сюда припаян SCL */
+
+    oled: ssd1306@3c {
+        compatible = "solomon,ssd1306fb";
+        reg = <0x3c>;  /* Адрес: 0x3c или 0x3d */
+        width = <128>;
+        height = <64>;  /* 32 или 64 в зависимости от экрана */
+        segment-offset = <0>;
+        page-offset = <0>;
+        display-offset = <0>;
+        multiplex-ratio = <63>;
+        segment-remap;
+        com-invdir;
+        prechargep = <0x22>;
+    };
+};
