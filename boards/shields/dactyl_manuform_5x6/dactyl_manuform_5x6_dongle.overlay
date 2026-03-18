@@ -43,6 +43,7 @@
 oled: sh1106@3c {
     compatible = "sinowealth,sh1106";
     reg = <0x3c>;
+
     width = <128>;
     height = <64>;
 
@@ -53,5 +54,7 @@ oled: sh1106@3c {
 
     segment-remap;
     com-invdir;
+
+    prechargep = <0x22>;
 };
 };
