@@ -25,7 +25,8 @@ include:
     shield: dactyl_manuform_5x6_right
     cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
   - board: nice_nano//zmk
-    shield: dongle_display
+    shield: dactyl_manuform_5x6_dongle dongle_display
+    artifact-name: dongle_macintosh
   - board: nice_nano//zmk
     shield: settings_reset
 # Add these cmake-args to the peripherals you wish to use with the dongle
