@@ -96,12 +96,12 @@
 
         raise_layer {
             bindings = <
-&bootloader  &bt BT_SEL 0   &bt BT_SEL 1    &bt BT_SEL 2   &bt BT_SEL 3   &bt BT_SEL 4                   &kp C_PWR  &kp K_PWR  &kp K_SLEEP       &kp C_SLEEP        &trans  &trans
-&trans       &bt BT_DISC 0  &bt BT_DISC 1   &bt BT_DISC 2  &bt BT_DISC 3  &bt BT_DISC 4                  &trans     &trans     &trans            &trans             &trans  &trans
-&trans       &bt BT_CLR     &bt BT_CLR_ALL  &bt BT_NXT     &bt BT_PRV     &trans                         &trans     &trans     &kp LEFT_BRACKET  &kp RIGHT_BRACKET  &trans  &kp GRAVE
-&trans       &M1            &M2             &trans         &trans         &trans                         &trans     &trans     &trans            &trans             &trans  &kp TILDE
-                            &trans          &trans                                                                             &trans            &trans
-                                                           &trans         &trans                         &trans     &trans
+&bootloader  &bt BT_SEL 0   &bt BT_SEL 1    &bt BT_SEL 2   &bt BT_SEL 3   &bt BT_SEL 4                   &kp C_PWR        &kp K_PWR       &kp K_SLEEP      &kp C_SLEEP        &trans  &trans
+&trans       &bt BT_DISC 0  &bt BT_DISC 1   &bt BT_DISC 2  &bt BT_DISC 3  &bt BT_DISC 4                  &kp PRINTSCREEN  &kp SCROLLLOCK  &kp PAUSE_BREAK  &trans             &trans  &trans
+&trans       &bt BT_CLR     &bt BT_CLR_ALL  &bt BT_NXT     &bt BT_PRV     &trans                         &kp INS          &kp HOME        &kp PG_UP        &kp RIGHT_BRACKET  &trans  &kp GRAVE
+&trans       &M1            &M2             &trans         &trans         &trans                         &kp DEL          &kp END         &kp PAGE_DOWN    &trans             &trans  &kp TILDE
+                            &trans          &trans                                                                                        &trans           &trans
+                                                           &trans         &trans                         &trans           &trans
                                                                           &trans         &trans  &trans  &trans
                                                                           &trans         &trans  &trans  &trans
             >;
