@@ -33,6 +33,9 @@ LV_IMG_DECLARE(bongo_cat_right2);
 LV_IMG_DECLARE(bongo_cat_both1);
 LV_IMG_DECLARE(bongo_cat_both1_open);
 LV_IMG_DECLARE(bongo_cat_both2);
+LV_IMG_DECLARE(bongo_blast_1);
+LV_IMG_DECLARE(bongo_blast_2);
+LV_IMG_DECLARE(bongo_blast_3);
 
 #define ANIMATION_SPEED_IDLE 10000
 const lv_img_dsc_t *idle_imgs[] = {
@@ -71,6 +74,13 @@ const lv_img_dsc_t *fast_imgs[] = {
     &bongo_cat_both1,
     &bongo_cat_none,
     &bongo_cat_none,
+};
+
+#define ANIMATION_SPEED_BLAST 4500
+const lv_img_dsc_t *blast_imgs[] = {
+    &bongo_blast_1,
+    &bongo_blast_2,
+    &bongo_blast_3,
 };
 
 struct bongo_cat_wpm_status_state {
@@ -162,7 +172,7 @@ static lv_obj_t *create_keyboard(lv_obj_t *parent) {
     lv_obj_t *keyboard = lv_obj_create(parent);
     lv_obj_remove_style_all(keyboard);
     lv_obj_set_size(keyboard, 50, 12);
-    lv_obj_align(keyboard, LV_ALIGN_BOTTOM_MID, 0, 1);
+    lv_obj_align(keyboard, LV_ALIGN_BOTTOM_MID, 0, -4);
 
     create_keyboard_half(keyboard, 0, 1, false);
     create_keyboard_half(keyboard, 31, 1, true);
@@ -171,62 +181,13 @@ static lv_obj_t *create_keyboard(lv_obj_t *parent) {
 }
 
 static lv_obj_t *create_blast(lv_obj_t *parent, lv_obj_t *keyboard) {
-    static lv_style_t blast_style;
-    static bool blast_style_ready;
-
-    static const lv_point_t core_points[] = {{18, 16}, {18, 5}};
-    static const lv_point_t left_points[] = {{14, 14}, {8, 8}};
-    static const lv_point_t right_points[] = {{22, 14}, {28, 8}};
-    static const lv_point_t low_left_points[] = {{13, 16}, {5, 15}};
-    static const lv_point_t low_right_points[] = {{23, 16}, {31, 15}};
-    static const lv_point_t crown_left_points[] = {{16, 9}, {12, 2}};
-    static const lv_point_t crown_mid_points[] = {{18, 8}, {18, 0}};
-    static const lv_point_t crown_right_points[] = {{20, 9}, {24, 2}};
-
-    if (!blast_style_ready) {
-        lv_style_init(&blast_style);
-        lv_style_set_line_width(&blast_style, 1);
-        lv_style_set_line_color(&blast_style, lv_color_black());
-        blast_style_ready = true;
-    }
-
-    lv_obj_t *blast = lv_obj_create(parent);
-    lv_obj_remove_style_all(blast);
-    lv_obj_set_size(blast, 36, 17);
-    lv_obj_align_to(blast, keyboard, LV_ALIGN_OUT_TOP_MID, 0, 5);
+    lv_obj_t *blast = lv_animimg_create(parent);
+    lv_animimg_set_src(blast, SRC(blast_imgs));
+    lv_animimg_set_duration(blast, ANIMATION_SPEED_BLAST);
+    lv_animimg_set_repeat_count(blast, LV_ANIM_REPEAT_INFINITE);
+    lv_obj_align_to(blast, keyboard, LV_ALIGN_OUT_TOP_MID, 0, 0);
+    lv_animimg_start(blast);
     lv_obj_add_flag(blast, LV_OBJ_FLAG_HIDDEN);
-
-    lv_obj_t *core = lv_line_create(blast);
-    lv_line_set_points(core, core_points, 2);
-    lv_obj_add_style(core, &blast_style, LV_PART_MAIN);
-
-    lv_obj_t *left = lv_line_create(blast);
-    lv_line_set_points(left, left_points, 2);
-    lv_obj_add_style(left, &blast_style, LV_PART_MAIN);
-
-    lv_obj_t *right = lv_line_create(blast);
-    lv_line_set_points(right, right_points, 2);
-    lv_obj_add_style(right, &blast_style, LV_PART_MAIN);
-
-    lv_obj_t *low_left = lv_line_create(blast);
-    lv_line_set_points(low_left, low_left_points, 2);
-    lv_obj_add_style(low_left, &blast_style, LV_PART_MAIN);
-
-    lv_obj_t *low_right = lv_line_create(blast);
-    lv_line_set_points(low_right, low_right_points, 2);
-    lv_obj_add_style(low_right, &blast_style, LV_PART_MAIN);
-
-    lv_obj_t *crown_left = lv_line_create(blast);
-    lv_line_set_points(crown_left, crown_left_points, 2);
-    lv_obj_add_style(crown_left, &blast_style, LV_PART_MAIN);
-
-    lv_obj_t *crown_mid = lv_line_create(blast);
-    lv_line_set_points(crown_mid, crown_mid_points, 2);
-    lv_obj_add_style(crown_mid, &blast_style, LV_PART_MAIN);
-
-    lv_obj_t *crown_right = lv_line_create(blast);
-    lv_line_set_points(crown_right, crown_right_points, 2);
-    lv_obj_add_style(crown_right, &blast_style, LV_PART_MAIN);
 
     return blast;
 }
@@ -313,7 +274,7 @@ int zmk_widget_bongo_cat_init(struct zmk_widget_bongo_cat *widget, lv_obj_t *par
 
     widget->anim_obj = lv_animimg_create(widget->obj);
     lv_obj_set_size(widget->anim_obj, CAT_WIDTH, CAT_HEIGHT);
-    lv_obj_align(widget->anim_obj, LV_ALIGN_TOP_RIGHT, 0, 0);
+    lv_obj_align(widget->anim_obj, LV_ALIGN_TOP_LEFT, 0, 0);
 
     widget->keyboard_obj = create_keyboard(widget->obj);
     widget->blast_obj = create_blast(widget->obj, widget->keyboard_obj);
