@@ -11,6 +11,8 @@
 #include "widgets/layer_status.h"
 #include "widgets/output_status.h"
 #include "widgets/hid_indicators.h"
+#include "widgets/typing_stats.h"
+#include "widgets/brand_label.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
@@ -20,6 +22,8 @@ static struct zmk_widget_layer_status layer_status_widget;
 static struct zmk_widget_peripheral_battery_status peripheral_battery_status_widget;
 static struct zmk_widget_modifiers modifiers_widget;
 static struct zmk_widget_bongo_cat bongo_cat_widget;
+static struct zmk_widget_typing_stats typing_stats_widget;
+static struct zmk_widget_brand_label brand_label_widget;
 
 #if IS_ENABLED(CONFIG_ZMK_HID_INDICATORS)
 static struct zmk_widget_hid_indicators hid_indicators_widget;
@@ -40,6 +44,16 @@ lv_obj_t *zmk_display_status_screen() {
     
     zmk_widget_output_status_init(&output_status_widget, screen);
     lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_LEFT, 0, 0);
+
+    zmk_widget_typing_stats_init(&typing_stats_widget, screen);
+    lv_obj_align_to(zmk_widget_typing_stats_obj(&typing_stats_widget),
+                    zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_OUT_BOTTOM_LEFT,
+                    0, 2);
+
+    zmk_widget_brand_label_init(&brand_label_widget, screen);
+    lv_obj_align_to(zmk_widget_brand_label_obj(&brand_label_widget),
+                    zmk_widget_typing_stats_obj(&typing_stats_widget), LV_ALIGN_OUT_RIGHT_MID, 8,
+                    0);
     
     zmk_widget_bongo_cat_init(&bongo_cat_widget, screen);
     lv_obj_align(zmk_widget_bongo_cat_obj(&bongo_cat_widget), LV_ALIGN_BOTTOM_RIGHT, 0, -7);
