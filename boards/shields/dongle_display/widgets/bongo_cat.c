@@ -97,26 +97,26 @@ enum anim_state {
     anim_state_overdrive
 } current_anim_state;
 
-static lv_obj_t *create_keyboard_half(lv_obj_t *parent, lv_coord_t x, lv_coord_t y, bool right_half) {
+static lv_obj_t *create_keyboard_half(lv_obj_t *parent, bool right_half) {
     static lv_style_t keyboard_style;
     static lv_style_t key_line_style;
     static bool styles_ready;
 
-    static const lv_point_t left_top_points[] = {{1, 2}, {13, 0}};
-    static const lv_point_t left_bottom_points[] = {{0, 7}, {12, 5}};
-    static const lv_point_t left_left_points[] = {{1, 2}, {0, 7}};
-    static const lv_point_t left_right_points[] = {{13, 0}, {12, 5}};
-    static const lv_point_t left_row_points[] = {{0, 4}, {12, 2}};
-    static const lv_point_t left_col1_points[] = {{5, 1}, {4, 6}};
-    static const lv_point_t left_col2_points[] = {{9, 1}, {8, 6}};
+    static const lv_point_t left_top_points[] = {{1, 2}, {11, 1}};
+    static const lv_point_t left_bottom_points[] = {{0, 6}, {10, 5}};
+    static const lv_point_t left_left_points[] = {{1, 2}, {0, 6}};
+    static const lv_point_t left_right_points[] = {{11, 1}, {10, 5}};
+    static const lv_point_t left_row_points[] = {{0, 4}, {10, 3}};
+    static const lv_point_t left_col1_points[] = {{4, 1}, {3, 5}};
+    static const lv_point_t left_col2_points[] = {{7, 1}, {6, 5}};
 
-    static const lv_point_t right_top_points[] = {{1, 0}, {13, 2}};
-    static const lv_point_t right_bottom_points[] = {{2, 5}, {14, 7}};
-    static const lv_point_t right_left_points[] = {{1, 0}, {2, 5}};
-    static const lv_point_t right_right_points[] = {{13, 2}, {14, 7}};
-    static const lv_point_t right_row_points[] = {{2, 2}, {14, 4}};
-    static const lv_point_t right_col1_points[] = {{6, 1}, {7, 6}};
-    static const lv_point_t right_col2_points[] = {{10, 1}, {11, 6}};
+    static const lv_point_t right_top_points[] = {{1, 0}, {11, 3}};
+    static const lv_point_t right_bottom_points[] = {{2, 4}, {12, 7}};
+    static const lv_point_t right_left_points[] = {{1, 0}, {2, 4}};
+    static const lv_point_t right_right_points[] = {{11, 3}, {12, 7}};
+    static const lv_point_t right_row_points[] = {{2, 2}, {12, 5}};
+    static const lv_point_t right_col1_points[] = {{5, 1}, {6, 5}};
+    static const lv_point_t right_col2_points[] = {{8, 2}, {9, 6}};
 
     if (!styles_ready) {
         lv_style_init(&keyboard_style);
@@ -135,8 +135,7 @@ static lv_obj_t *create_keyboard_half(lv_obj_t *parent, lv_coord_t x, lv_coord_t
     lv_obj_t *half = lv_obj_create(parent);
     lv_obj_remove_style_all(half);
     lv_obj_add_style(half, &keyboard_style, LV_PART_MAIN);
-    lv_obj_set_size(half, 15, 8);
-    lv_obj_set_pos(half, x, y);
+    lv_obj_set_size(half, 13, 8);
 
     lv_obj_t *top = lv_line_create(half);
     lv_line_set_points(top, right_half ? right_top_points : left_top_points, 2);
@@ -169,24 +168,12 @@ static lv_obj_t *create_keyboard_half(lv_obj_t *parent, lv_coord_t x, lv_coord_t
     return half;
 }
 
-static lv_obj_t *create_keyboard(lv_obj_t *parent) {
-    lv_obj_t *keyboard = lv_obj_create(parent);
-    lv_obj_remove_style_all(keyboard);
-    lv_obj_set_size(keyboard, 36, 9);
-    lv_obj_set_pos(keyboard, 12, 23);
-
-    create_keyboard_half(keyboard, 0, 1, false);
-    create_keyboard_half(keyboard, 21, 1, true);
-
-    return keyboard;
-}
-
-static lv_obj_t *create_blast(lv_obj_t *parent, lv_obj_t *keyboard) {
+static lv_obj_t *create_blast(lv_obj_t *parent) {
     lv_obj_t *blast = lv_animimg_create(parent);
     lv_animimg_set_src(blast, SRC(blast_imgs));
     lv_animimg_set_duration(blast, ANIMATION_SPEED_BLAST);
     lv_animimg_set_repeat_count(blast, LV_ANIM_REPEAT_INFINITE);
-    lv_obj_align_to(blast, keyboard, LV_ALIGN_OUT_TOP_MID, 0, 0);
+    lv_obj_set_pos(blast, 21, 7);
     lv_animimg_start(blast);
     lv_obj_add_flag(blast, LV_OBJ_FLAG_HIDDEN);
 
@@ -277,8 +264,13 @@ int zmk_widget_bongo_cat_init(struct zmk_widget_bongo_cat *widget, lv_obj_t *par
     lv_obj_set_size(widget->anim_obj, CAT_WIDTH, CAT_HEIGHT);
     lv_obj_set_pos(widget->anim_obj, CAT_IMAGE_X, 0);
 
-    widget->keyboard_obj = create_keyboard(widget->obj);
-    widget->blast_obj = create_blast(widget->obj, widget->keyboard_obj);
+    widget->keyboard_left_obj = create_keyboard_half(widget->obj, false);
+    lv_obj_set_pos(widget->keyboard_left_obj, 18, 19);
+
+    widget->keyboard_right_obj = create_keyboard_half(widget->obj, true);
+    lv_obj_set_pos(widget->keyboard_right_obj, 35, 15);
+
+    widget->blast_obj = create_blast(widget->obj);
 
     sys_slist_append(&widgets, &widget->node);
 

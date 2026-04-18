@@ -14,7 +14,8 @@ struct zmk_widget_bongo_cat {
     sys_snode_t node;
     lv_obj_t *obj;
     lv_obj_t *anim_obj;
-    lv_obj_t *keyboard_obj;
+    lv_obj_t *keyboard_left_obj;
+    lv_obj_t *keyboard_right_obj;
     lv_obj_t *blast_obj;
 };
 
