@@ -21,6 +21,10 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
+#define CAT_WIDTH 60
+#define CAT_HEIGHT 26
+#define CAT_WIDGET_HEIGHT 38
+
 LV_IMG_DECLARE(bongo_cat_none);
 LV_IMG_DECLARE(bongo_cat_left1);
 LV_IMG_DECLARE(bongo_cat_left2);
@@ -78,23 +82,30 @@ enum anim_state {
     anim_state_idle,
     anim_state_slow,
     anim_state_mid,
-    anim_state_fast
+    anim_state_fast,
+    anim_state_overdrive
 } current_anim_state;
 
-static void create_keyboard(lv_obj_t *parent) {
+static lv_obj_t *create_keyboard_half(lv_obj_t *parent, lv_coord_t x, lv_coord_t y, bool right_half) {
     static lv_style_t keyboard_style;
     static lv_style_t key_line_style;
     static bool styles_ready;
 
-    static const lv_point_t top_points[] = {{2, 1}, {23, 4}};
-    static const lv_point_t bottom_points[] = {{1, 6}, {22, 9}};
-    static const lv_point_t left_points[] = {{2, 1}, {1, 6}};
-    static const lv_point_t right_points[] = {{23, 4}, {22, 9}};
-    static const lv_point_t row_points[] = {{1, 4}, {22, 7}};
-    static const lv_point_t col1_points[] = {{6, 2}, {5, 7}};
-    static const lv_point_t col2_points[] = {{10, 2}, {9, 7}};
-    static const lv_point_t col3_points[] = {{14, 3}, {13, 8}};
-    static const lv_point_t col4_points[] = {{18, 3}, {17, 8}};
+    static const lv_point_t left_top_points[] = {{1, 2}, {17, 0}};
+    static const lv_point_t left_bottom_points[] = {{0, 9}, {16, 7}};
+    static const lv_point_t left_left_points[] = {{1, 2}, {0, 9}};
+    static const lv_point_t left_right_points[] = {{17, 0}, {16, 7}};
+    static const lv_point_t left_row_points[] = {{0, 6}, {16, 4}};
+    static const lv_point_t left_col1_points[] = {{6, 1}, {5, 8}};
+    static const lv_point_t left_col2_points[] = {{11, 1}, {10, 8}};
+
+    static const lv_point_t right_top_points[] = {{1, 0}, {17, 2}};
+    static const lv_point_t right_bottom_points[] = {{2, 7}, {18, 9}};
+    static const lv_point_t right_left_points[] = {{1, 0}, {2, 7}};
+    static const lv_point_t right_right_points[] = {{17, 2}, {18, 9}};
+    static const lv_point_t right_row_points[] = {{2, 4}, {18, 6}};
+    static const lv_point_t right_col1_points[] = {{8, 1}, {9, 8}};
+    static const lv_point_t right_col2_points[] = {{13, 1}, {14, 8}};
 
     if (!styles_ready) {
         lv_style_init(&keyboard_style);
@@ -110,56 +121,134 @@ static void create_keyboard(lv_obj_t *parent) {
         styles_ready = true;
     }
 
-    lv_obj_t *keyboard = lv_obj_create(parent);
-    lv_obj_remove_style_all(keyboard);
-    lv_obj_add_style(keyboard, &keyboard_style, LV_PART_MAIN);
-    lv_obj_set_size(keyboard, 25, 10);
-    lv_obj_align(keyboard, LV_ALIGN_BOTTOM_MID, -1, -1);
+    lv_obj_t *half = lv_obj_create(parent);
+    lv_obj_remove_style_all(half);
+    lv_obj_add_style(half, &keyboard_style, LV_PART_MAIN);
+    lv_obj_set_size(half, 19, 10);
+    lv_obj_set_pos(half, x, y);
 
-    lv_obj_t *top = lv_line_create(keyboard);
-    lv_line_set_points(top, top_points, 2);
+    lv_obj_t *top = lv_line_create(half);
+    lv_line_set_points(top, right_half ? right_top_points : left_top_points, 2);
     lv_obj_add_style(top, &key_line_style, LV_PART_MAIN);
 
-    lv_obj_t *bottom = lv_line_create(keyboard);
-    lv_line_set_points(bottom, bottom_points, 2);
+    lv_obj_t *bottom = lv_line_create(half);
+    lv_line_set_points(bottom, right_half ? right_bottom_points : left_bottom_points, 2);
     lv_obj_add_style(bottom, &key_line_style, LV_PART_MAIN);
 
-    lv_obj_t *left = lv_line_create(keyboard);
-    lv_line_set_points(left, left_points, 2);
+    lv_obj_t *left = lv_line_create(half);
+    lv_line_set_points(left, right_half ? right_left_points : left_left_points, 2);
     lv_obj_add_style(left, &key_line_style, LV_PART_MAIN);
 
-    lv_obj_t *right = lv_line_create(keyboard);
-    lv_line_set_points(right, right_points, 2);
+    lv_obj_t *right = lv_line_create(half);
+    lv_line_set_points(right, right_half ? right_right_points : left_right_points, 2);
     lv_obj_add_style(right, &key_line_style, LV_PART_MAIN);
 
-    lv_obj_t *row = lv_line_create(keyboard);
-    lv_line_set_points(row, row_points, 2);
+    lv_obj_t *row = lv_line_create(half);
+    lv_line_set_points(row, right_half ? right_row_points : left_row_points, 2);
     lv_obj_add_style(row, &key_line_style, LV_PART_MAIN);
 
-    lv_obj_t *col1 = lv_line_create(keyboard);
-    lv_line_set_points(col1, col1_points, 2);
+    lv_obj_t *col1 = lv_line_create(half);
+    lv_line_set_points(col1, right_half ? right_col1_points : left_col1_points, 2);
     lv_obj_add_style(col1, &key_line_style, LV_PART_MAIN);
 
-    lv_obj_t *col2 = lv_line_create(keyboard);
-    lv_line_set_points(col2, col2_points, 2);
+    lv_obj_t *col2 = lv_line_create(half);
+    lv_line_set_points(col2, right_half ? right_col2_points : left_col2_points, 2);
     lv_obj_add_style(col2, &key_line_style, LV_PART_MAIN);
 
-    lv_obj_t *col3 = lv_line_create(keyboard);
-    lv_line_set_points(col3, col3_points, 2);
-    lv_obj_add_style(col3, &key_line_style, LV_PART_MAIN);
-
-    lv_obj_t *col4 = lv_line_create(keyboard);
-    lv_line_set_points(col4, col4_points, 2);
-    lv_obj_add_style(col4, &key_line_style, LV_PART_MAIN);
+    return half;
 }
 
-static void set_animation(lv_obj_t *animing, struct bongo_cat_wpm_status_state state) {
+static lv_obj_t *create_keyboard(lv_obj_t *parent) {
+    lv_obj_t *keyboard = lv_obj_create(parent);
+    lv_obj_remove_style_all(keyboard);
+    lv_obj_set_size(keyboard, 50, 12);
+    lv_obj_align(keyboard, LV_ALIGN_BOTTOM_MID, 0, 1);
+
+    create_keyboard_half(keyboard, 0, 1, false);
+    create_keyboard_half(keyboard, 31, 1, true);
+
+    return keyboard;
+}
+
+static lv_obj_t *create_blast(lv_obj_t *parent, lv_obj_t *keyboard) {
+    static lv_style_t blast_style;
+    static bool blast_style_ready;
+
+    static const lv_point_t core_points[] = {{18, 16}, {18, 5}};
+    static const lv_point_t left_points[] = {{14, 14}, {8, 8}};
+    static const lv_point_t right_points[] = {{22, 14}, {28, 8}};
+    static const lv_point_t low_left_points[] = {{13, 16}, {5, 15}};
+    static const lv_point_t low_right_points[] = {{23, 16}, {31, 15}};
+    static const lv_point_t crown_left_points[] = {{16, 9}, {12, 2}};
+    static const lv_point_t crown_mid_points[] = {{18, 8}, {18, 0}};
+    static const lv_point_t crown_right_points[] = {{20, 9}, {24, 2}};
+
+    if (!blast_style_ready) {
+        lv_style_init(&blast_style);
+        lv_style_set_line_width(&blast_style, 1);
+        lv_style_set_line_color(&blast_style, lv_color_black());
+        blast_style_ready = true;
+    }
+
+    lv_obj_t *blast = lv_obj_create(parent);
+    lv_obj_remove_style_all(blast);
+    lv_obj_set_size(blast, 36, 17);
+    lv_obj_align_to(blast, keyboard, LV_ALIGN_OUT_TOP_MID, 0, 5);
+    lv_obj_add_flag(blast, LV_OBJ_FLAG_HIDDEN);
+
+    lv_obj_t *core = lv_line_create(blast);
+    lv_line_set_points(core, core_points, 2);
+    lv_obj_add_style(core, &blast_style, LV_PART_MAIN);
+
+    lv_obj_t *left = lv_line_create(blast);
+    lv_line_set_points(left, left_points, 2);
+    lv_obj_add_style(left, &blast_style, LV_PART_MAIN);
+
+    lv_obj_t *right = lv_line_create(blast);
+    lv_line_set_points(right, right_points, 2);
+    lv_obj_add_style(right, &blast_style, LV_PART_MAIN);
+
+    lv_obj_t *low_left = lv_line_create(blast);
+    lv_line_set_points(low_left, low_left_points, 2);
+    lv_obj_add_style(low_left, &blast_style, LV_PART_MAIN);
+
+    lv_obj_t *low_right = lv_line_create(blast);
+    lv_line_set_points(low_right, low_right_points, 2);
+    lv_obj_add_style(low_right, &blast_style, LV_PART_MAIN);
+
+    lv_obj_t *crown_left = lv_line_create(blast);
+    lv_line_set_points(crown_left, crown_left_points, 2);
+    lv_obj_add_style(crown_left, &blast_style, LV_PART_MAIN);
+
+    lv_obj_t *crown_mid = lv_line_create(blast);
+    lv_line_set_points(crown_mid, crown_mid_points, 2);
+    lv_obj_add_style(crown_mid, &blast_style, LV_PART_MAIN);
+
+    lv_obj_t *crown_right = lv_line_create(blast);
+    lv_line_set_points(crown_right, crown_right_points, 2);
+    lv_obj_add_style(crown_right, &blast_style, LV_PART_MAIN);
+
+    return blast;
+}
+
+static void set_blast_visible(struct zmk_widget_bongo_cat *widget, bool visible) {
+    if (visible) {
+        lv_obj_clear_flag(widget->blast_obj, LV_OBJ_FLAG_HIDDEN);
+    } else {
+        lv_obj_add_flag(widget->blast_obj, LV_OBJ_FLAG_HIDDEN);
+    }
+}
+
+static void set_animation(struct zmk_widget_bongo_cat *widget, struct bongo_cat_wpm_status_state state) {
+    lv_obj_t *animing = widget->anim_obj;
+
     if (state.wpm < 5) {
         if (current_anim_state != anim_state_idle) {
             lv_animimg_set_src(animing, SRC(idle_imgs));
             lv_animimg_set_duration(animing, ANIMATION_SPEED_IDLE);
             lv_animimg_set_repeat_count(animing, LV_ANIM_REPEAT_INFINITE);
             lv_animimg_start(animing);
+            set_blast_visible(widget, false);
             current_anim_state = anim_state_idle;
         }
     } else if (state.wpm < 30) {
@@ -168,6 +257,7 @@ static void set_animation(lv_obj_t *animing, struct bongo_cat_wpm_status_state s
             lv_animimg_set_duration(animing, ANIMATION_SPEED_SLOW);
             lv_animimg_set_repeat_count(animing, LV_ANIM_REPEAT_INFINITE);
             lv_animimg_start(animing);
+            set_blast_visible(widget, false);
             current_anim_state = anim_state_slow;
         }
     } else if (state.wpm < 70) {
@@ -176,15 +266,26 @@ static void set_animation(lv_obj_t *animing, struct bongo_cat_wpm_status_state s
             lv_animimg_set_duration(animing, ANIMATION_SPEED_MID);
             lv_animimg_set_repeat_count(animing, LV_ANIM_REPEAT_INFINITE);
             lv_animimg_start(animing);
+            set_blast_visible(widget, false);
             current_anim_state = anim_state_mid;
         }
-    } else {
+    } else if (state.wpm < 100) {
         if (current_anim_state != anim_state_fast) {
             lv_animimg_set_src(animing, SRC(fast_imgs));
             lv_animimg_set_duration(animing, ANIMATION_SPEED_FAST);
             lv_animimg_set_repeat_count(animing, LV_ANIM_REPEAT_INFINITE);
             lv_animimg_start(animing);
+            set_blast_visible(widget, false);
             current_anim_state = anim_state_fast;
+        }
+    } else {
+        if (current_anim_state != anim_state_overdrive) {
+            lv_animimg_set_src(animing, SRC(fast_imgs));
+            lv_animimg_set_duration(animing, 90);
+            lv_animimg_set_repeat_count(animing, LV_ANIM_REPEAT_INFINITE);
+            lv_animimg_start(animing);
+            set_blast_visible(widget, true);
+            current_anim_state = anim_state_overdrive;
         }
     }
 }
@@ -196,7 +297,7 @@ struct bongo_cat_wpm_status_state bongo_cat_wpm_status_get_state(const zmk_event
 
 void bongo_cat_wpm_status_update_cb(struct bongo_cat_wpm_status_state state) {
     struct zmk_widget_bongo_cat *widget;
-    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) { set_animation(widget->obj, state); }
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) { set_animation(widget, state); }
 }
 
 ZMK_DISPLAY_WIDGET_LISTENER(widget_bongo_cat, struct bongo_cat_wpm_status_state,
@@ -205,13 +306,22 @@ ZMK_DISPLAY_WIDGET_LISTENER(widget_bongo_cat, struct bongo_cat_wpm_status_state,
 ZMK_SUBSCRIPTION(widget_bongo_cat, zmk_wpm_state_changed);
 
 int zmk_widget_bongo_cat_init(struct zmk_widget_bongo_cat *widget, lv_obj_t *parent) {
-    widget->obj = lv_animimg_create(parent);
+    widget->obj = lv_obj_create(parent);
+    lv_obj_remove_style_all(widget->obj);
+    lv_obj_set_size(widget->obj, CAT_WIDTH, CAT_WIDGET_HEIGHT);
     lv_obj_center(widget->obj);
-    create_keyboard(widget->obj);
+
+    widget->anim_obj = lv_animimg_create(widget->obj);
+    lv_obj_set_size(widget->anim_obj, CAT_WIDTH, CAT_HEIGHT);
+    lv_obj_align(widget->anim_obj, LV_ALIGN_TOP_RIGHT, 0, 0);
+
+    widget->keyboard_obj = create_keyboard(widget->obj);
+    widget->blast_obj = create_blast(widget->obj, widget->keyboard_obj);
 
     sys_slist_append(&widgets, &widget->node);
 
     widget_bongo_cat_init();
+    set_animation(widget, (struct bongo_cat_wpm_status_state){.wpm = 0});
 
     return 0;
 }
