@@ -10,7 +10,7 @@
 #include <zephyr/kernel.h>
 #include <dt-bindings/zmk/modifiers.h>
 
-#define SIZE_SYMBOLS 14 // 14 x 14 pixel
+#define SIZE_SYMBOLS 16 // 16 x 16 pixel
 
 struct zmk_widget_modifiers {
     sys_snode_t node;
