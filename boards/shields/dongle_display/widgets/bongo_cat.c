@@ -86,18 +86,20 @@ static void create_keyboard(lv_obj_t *parent) {
     static lv_style_t key_line_style;
     static bool styles_ready;
 
-    static const lv_point_t row_points[] = {{1, 3}, {22, 3}};
-    static const lv_point_t col1_points[] = {{4, 1}, {4, 5}};
-    static const lv_point_t col2_points[] = {{8, 1}, {8, 5}};
-    static const lv_point_t col3_points[] = {{12, 1}, {12, 5}};
-    static const lv_point_t col4_points[] = {{16, 1}, {16, 5}};
-    static const lv_point_t col5_points[] = {{20, 1}, {20, 5}};
+    static const lv_point_t top_points[] = {{2, 1}, {23, 4}};
+    static const lv_point_t bottom_points[] = {{1, 6}, {22, 9}};
+    static const lv_point_t left_points[] = {{2, 1}, {1, 6}};
+    static const lv_point_t right_points[] = {{23, 4}, {22, 9}};
+    static const lv_point_t row_points[] = {{1, 4}, {22, 7}};
+    static const lv_point_t col1_points[] = {{6, 2}, {5, 7}};
+    static const lv_point_t col2_points[] = {{10, 2}, {9, 7}};
+    static const lv_point_t col3_points[] = {{14, 3}, {13, 8}};
+    static const lv_point_t col4_points[] = {{18, 3}, {17, 8}};
 
     if (!styles_ready) {
         lv_style_init(&keyboard_style);
         lv_style_set_bg_opa(&keyboard_style, LV_OPA_TRANSP);
-        lv_style_set_border_width(&keyboard_style, 1);
-        lv_style_set_border_color(&keyboard_style, lv_color_black());
+        lv_style_set_border_width(&keyboard_style, 0);
         lv_style_set_radius(&keyboard_style, 0);
         lv_style_set_pad_all(&keyboard_style, 0);
 
@@ -111,8 +113,24 @@ static void create_keyboard(lv_obj_t *parent) {
     lv_obj_t *keyboard = lv_obj_create(parent);
     lv_obj_remove_style_all(keyboard);
     lv_obj_add_style(keyboard, &keyboard_style, LV_PART_MAIN);
-    lv_obj_set_size(keyboard, 24, 7);
+    lv_obj_set_size(keyboard, 25, 10);
     lv_obj_align(keyboard, LV_ALIGN_BOTTOM_MID, -1, -1);
+
+    lv_obj_t *top = lv_line_create(keyboard);
+    lv_line_set_points(top, top_points, 2);
+    lv_obj_add_style(top, &key_line_style, LV_PART_MAIN);
+
+    lv_obj_t *bottom = lv_line_create(keyboard);
+    lv_line_set_points(bottom, bottom_points, 2);
+    lv_obj_add_style(bottom, &key_line_style, LV_PART_MAIN);
+
+    lv_obj_t *left = lv_line_create(keyboard);
+    lv_line_set_points(left, left_points, 2);
+    lv_obj_add_style(left, &key_line_style, LV_PART_MAIN);
+
+    lv_obj_t *right = lv_line_create(keyboard);
+    lv_line_set_points(right, right_points, 2);
+    lv_obj_add_style(right, &key_line_style, LV_PART_MAIN);
 
     lv_obj_t *row = lv_line_create(keyboard);
     lv_line_set_points(row, row_points, 2);
@@ -133,10 +151,6 @@ static void create_keyboard(lv_obj_t *parent) {
     lv_obj_t *col4 = lv_line_create(keyboard);
     lv_line_set_points(col4, col4_points, 2);
     lv_obj_add_style(col4, &key_line_style, LV_PART_MAIN);
-
-    lv_obj_t *col5 = lv_line_create(keyboard);
-    lv_line_set_points(col5, col5_points, 2);
-    lv_obj_add_style(col5, &key_line_style, LV_PART_MAIN);
 }
 
 static void set_animation(lv_obj_t *animing, struct bongo_cat_wpm_status_state state) {
