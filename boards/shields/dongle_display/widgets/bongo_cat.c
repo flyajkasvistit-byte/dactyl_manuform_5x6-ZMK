@@ -268,7 +268,7 @@ int zmk_widget_bongo_cat_init(struct zmk_widget_bongo_cat *widget, lv_obj_t *par
     lv_obj_set_pos(widget->keyboard_left_obj, 14, 16);
 
     widget->keyboard_right_obj = create_keyboard_half(widget->obj, true);
-    lv_obj_set_pos(widget->keyboard_right_obj, 35, 21);
+    lv_obj_set_pos(widget->keyboard_right_obj, 33, 20);
 
     widget->blast_obj = create_blast(widget->obj);
 
