@@ -102,13 +102,13 @@ static lv_obj_t *create_keyboard_half(lv_obj_t *parent, bool right_half) {
     static lv_style_t key_line_style;
     static bool styles_ready;
 
-    static const lv_point_t left_top_points[] = {{1, 2}, {17, 0}};
-    static const lv_point_t left_bottom_points[] = {{0, 9}, {16, 7}};
-    static const lv_point_t left_left_points[] = {{1, 2}, {0, 9}};
-    static const lv_point_t left_right_points[] = {{17, 0}, {16, 7}};
-    static const lv_point_t left_row_points[] = {{0, 6}, {16, 4}};
-    static const lv_point_t left_col1_points[] = {{6, 1}, {5, 8}};
-    static const lv_point_t left_col2_points[] = {{11, 1}, {10, 8}};
+    static const lv_point_t left_top_points[] = {{17, 2}, {1, 0}};
+    static const lv_point_t left_bottom_points[] = {{18, 9}, {2, 7}};
+    static const lv_point_t left_left_points[] = {{17, 2}, {18, 9}};
+    static const lv_point_t left_right_points[] = {{1, 0}, {2, 7}};
+    static const lv_point_t left_row_points[] = {{18, 6}, {2, 4}};
+    static const lv_point_t left_col1_points[] = {{12, 1}, {13, 8}};
+    static const lv_point_t left_col2_points[] = {{7, 1}, {8, 8}};
 
     static const lv_point_t right_top_points[] = {{1, 0}, {17, 2}};
     static const lv_point_t right_bottom_points[] = {{2, 7}, {18, 9}};
