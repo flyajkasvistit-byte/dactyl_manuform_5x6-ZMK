@@ -45,6 +45,8 @@ ZMK_SUBSCRIPTION(widget_typing_stats, zmk_wpm_state_changed);
 int zmk_widget_typing_stats_init(struct zmk_widget_typing_stats *widget, lv_obj_t *parent) {
     widget->obj = lv_label_create(parent);
     lv_label_set_text(widget->obj, " 0");
+    lv_obj_set_width(widget->obj, 24);
+    lv_obj_set_style_text_align(widget->obj, LV_TEXT_ALIGN_CENTER, 0);
 
     sys_slist_append(&widgets, &widget->node);
 

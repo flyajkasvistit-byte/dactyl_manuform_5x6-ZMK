@@ -42,14 +42,30 @@ lv_obj_t *zmk_display_status_screen() {
     
     zmk_widget_output_status_init(&output_status_widget, screen);
     lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_LEFT, 0, 0);
-
-    zmk_widget_typing_stats_init(&typing_stats_widget, screen);
-    lv_obj_align_to(zmk_widget_typing_stats_obj(&typing_stats_widget),
-                    zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_OUT_BOTTOM_LEFT,
-                    0, 2);
     
     zmk_widget_bongo_cat_init(&bongo_cat_widget, screen);
     lv_obj_align(zmk_widget_bongo_cat_obj(&bongo_cat_widget), LV_ALIGN_BOTTOM_RIGHT, -8, -5);
+
+    zmk_widget_typing_stats_init(&typing_stats_widget, screen);
+    lv_obj_set_pos(
+        zmk_widget_typing_stats_obj(&typing_stats_widget),
+        lv_obj_get_x(zmk_widget_bongo_cat_obj(&bongo_cat_widget)) +
+            (lv_obj_get_x(bongo_cat_widget.keyboard_left_obj) +
+             lv_obj_get_width(bongo_cat_widget.keyboard_left_obj) / 2 +
+             lv_obj_get_x(bongo_cat_widget.keyboard_right_obj) +
+             lv_obj_get_width(bongo_cat_widget.keyboard_right_obj) / 2) /
+                2 -
+            lv_obj_get_width(zmk_widget_typing_stats_obj(&typing_stats_widget)) / 2,
+        lv_obj_get_y(zmk_widget_bongo_cat_obj(&bongo_cat_widget)) +
+            ((lv_obj_get_y(bongo_cat_widget.keyboard_left_obj) +
+              lv_obj_get_height(bongo_cat_widget.keyboard_left_obj)) >
+                     (lv_obj_get_y(bongo_cat_widget.keyboard_right_obj) +
+                      lv_obj_get_height(bongo_cat_widget.keyboard_right_obj))
+                 ? (lv_obj_get_y(bongo_cat_widget.keyboard_left_obj) +
+                    lv_obj_get_height(bongo_cat_widget.keyboard_left_obj))
+                 : (lv_obj_get_y(bongo_cat_widget.keyboard_right_obj) +
+                    lv_obj_get_height(bongo_cat_widget.keyboard_right_obj))) +
+            1);
 
     zmk_widget_modifiers_init(&modifiers_widget, screen);
     lv_obj_align(zmk_widget_modifiers_obj(&modifiers_widget), LV_ALIGN_BOTTOM_LEFT, 0, 0);
