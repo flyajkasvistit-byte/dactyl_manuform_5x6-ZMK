@@ -173,7 +173,7 @@ static lv_obj_t *create_blast(lv_obj_t *parent) {
     lv_animimg_set_src(blast, SRC(blast_imgs));
     lv_animimg_set_duration(blast, ANIMATION_SPEED_BLAST);
     lv_animimg_set_repeat_count(blast, LV_ANIM_REPEAT_INFINITE);
-    lv_obj_set_pos(blast, 21, 7);
+    lv_obj_set_pos(blast, 24, 12);
     lv_animimg_start(blast);
     lv_obj_add_flag(blast, LV_OBJ_FLAG_HIDDEN);
 
@@ -262,13 +262,13 @@ int zmk_widget_bongo_cat_init(struct zmk_widget_bongo_cat *widget, lv_obj_t *par
 
     widget->anim_obj = lv_animimg_create(widget->obj);
     lv_obj_set_size(widget->anim_obj, CAT_WIDTH, CAT_HEIGHT);
-    lv_obj_set_pos(widget->anim_obj, CAT_IMAGE_X, 0);
+    lv_obj_set_pos(widget->anim_obj, CAT_IMAGE_X + 3, 5);
 
     widget->keyboard_left_obj = create_keyboard_half(widget->obj, false);
-    lv_obj_set_pos(widget->keyboard_left_obj, 14, 16);
+    lv_obj_set_pos(widget->keyboard_left_obj, 17, 21);
 
     widget->keyboard_right_obj = create_keyboard_half(widget->obj, true);
-    lv_obj_set_pos(widget->keyboard_right_obj, 33, 20);
+    lv_obj_set_pos(widget->keyboard_right_obj, 36, 25);
 
     widget->blast_obj = create_blast(widget->obj);
 
